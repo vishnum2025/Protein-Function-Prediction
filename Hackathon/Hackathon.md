@@ -1,4 +1,4 @@
-<!-- ## Hackathon Instructions: https://docs.google.com/document/d/13CSiwOzHRmVYBAqPpLDaQzFgBc9mM1gMAlJDDCTIbfQ/edit?tab=t.0## -->
+## Hackathon Instructions: https://docs.google.com/document/d/13CSiwOzHRmVYBAqPpLDaQzFgBc9mM1gMAlJDDCTIbfQ/edit?tab=t.0##
 
 ## Contents of the Data Folder: ##
 

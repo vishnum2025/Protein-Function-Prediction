@@ -90,7 +90,7 @@ This:
 
 ---
 
-### Random Forest Baseline
+#### Random Forest Baseline
 
 ```bash
 cd randomforest_regressor

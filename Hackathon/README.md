@@ -23,35 +23,35 @@ Hackathon/
 │   ├── test.csv
 │
 ├── GP/
-│   ├── Hackathon_v2.ipynb        # Main GP + feature engineering pipeline
-│   ├── predictions.csv           # Final predictions
-│   ├── submission_round4_opt.csv # Final optimized submission
-│   ├── top10.txt                 # Top 10 predicted mutations
+│   ├── Hackathon_v2.ipynb        #Main GP + feature engineering pipeline
+│   ├── predictions.csv           #Final predictions
+│   ├── submission_round4_opt.csv #Final optimized submission
+│   ├── top10.txt                 #Top 10 predicted mutations
 │
 ├── Ridge/
-│   ├── ridge.py                  # Zero-shot + Ridge calibration model
+│   ├── ridge.py                  #Zero-shot + Ridge calibration model
 │   ├── predictions_round1_ridge.csv
 │
 ├── xgboost_model/
-│   ├── xgboost_model.ipynb       # XGBoost baseline model
+│   ├── xgboost_model.ipynb       #XGBoost baseline model
 │   ├── predictions_xgb.csv
 │   ├── query_xgb.txt
 │   ├── top10_xgb.txt
 |
-│── randomforest_regressor/       # Baseline RF model with engineered features
+│── randomforest_regressor/       #Baseline RF model with engineered features
 |   ├── pos_aa_embedding.ipynb
 |   ├── aa_predictions.csv
 │
 ├── Saprot Predictions/
-│   ├── mlp+saprot.ipynb       #SaProt embeddings + MLP model
+│   ├── mlp+saprot.ipynb          #SaProt embeddings + MLP model
 │   ├── predictions.csv
 │   ├── top10.txt
 │
 ├── foldseek/
-│   ├── bin/                  #Foldseek executable
+│   ├── bin/                      #Foldseek executable
 │   ├── README.md
 │
-├── foldseek_db/              #Foldseek database files
+├── foldseek_db/                  #Foldseek database files
 │   ├── my_db*
 │
 ├── APIKey.txt

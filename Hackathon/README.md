@@ -41,12 +41,21 @@ Hackathon/
 │── randomforest_regressor/       # Baseline RF model with engineered features
 |   ├── pos_aa_embedding.ipynb
 |   ├── aa_predictions.csv
-|
-├── early_checkpoint/             # Checkpoint submissions
+│
+├── Saprot Predictions/
+│   ├── mlp+saprot.ipynb       #SaProt embeddings + MLP model
+│   ├── predictions.csv
+│   ├── top10.txt
+│
+├── foldseek/
+│   ├── bin/                  #Foldseek executable
+│   ├── README.md
+│
+├── foldseek_db/              #Foldseek database files
+│   ├── my_db*
 │
 ├── APIKey.txt
-├── GroupName.txt
-├── Hackathon.md                  # Report / notes
+├── GroupName.txt            
 ```
 
 ---
@@ -116,6 +125,17 @@ Used for:
 
 ---
 
+### SaProt + MLP Model
+
+```bash
+cd "Saprot Predictions"
+jupyter notebook mlp+saprot.ipynb
+```
+
+* Uses structure-aware embeddings
+* Trains an MLP head for prediction
+---
+
 #### Gaussian Process Model
 
 ```bash
@@ -183,11 +203,18 @@ Our modeling approach evolved iteratively:
    * Introduced pretrained embeddings
    * Strong improvement in generalization
 
-4. **Gaussian Process (Final Model)**
+4. **SaProt + MLP** 
+
+   * Incorporates structure-aware embeddings
+   * Provides complementary performance improvements
+
+5. **Gaussian Process (Final Model)**
 
    * Combines ESM features + engineered features
    * Provides uncertainty estimates for active learning
    * Achieves best performance
+
+
 
 ---
 
@@ -231,6 +258,15 @@ We used three query rounds:
 
 ---
 
+## Configuration Notes
+
+Some scripts contain hardcoded paths (e.g., data directories, cache files, or external tool dependencies).  
+Please update these paths to match your local environment before running the code.
+
+For the SaProt pipeline, Foldseek and its associated database files (`foldseek/`, `foldseek_db/`) are included as supporting resources for structure-aware preprocessing. These files are large and may require local path adjustments.
+
+---
+
 ## Reproducibility Notes
 
 * ESM-2 outputs are cached to reduce recomputation time
@@ -247,3 +283,4 @@ We used three query rounds:
 * Gaussian Processes provide both strong predictions and uncertainty estimates
 
 ---
+

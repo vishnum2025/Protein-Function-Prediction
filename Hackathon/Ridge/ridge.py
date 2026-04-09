@@ -14,11 +14,11 @@ TRAIN_PATH = f'{DATA_DIR}/train.csv'
 TEST_PATH  = f'{DATA_DIR}/test.csv'
 CACHE_PATH = f'{DATA_DIR}/esm2_150M_zeroshot_scores.npz'
 
-QUERY_PATHS = [f'{DATA_DIR}/query1_labeled.csv']   # ← update each round
+QUERY_PATHS = []   # ← update each round
 N_ENSEMBLE  = 5    
 BOOTSTRAP   = 0.9
 N_QUERY     = 100
-ROUND       = 2    # ← update each round
+ROUND       = 1    # ← update each round
 
 
 device = torch.device('cpu')

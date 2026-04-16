@@ -6,18 +6,15 @@ from structure_pipeline import StructurePipeline
 from clustering_and_splits import SequenceClustering
 
 def main():
-    # 1. Data Curation: Fetch and Extract from UniProt
     uniprot = UniProtPipeline(UNIPROT_API_BASE)
-    raw_entries = uniprot.fetch_swissprot_entries(limit=50) # Small limit for testing
+    raw_entries = uniprot.fetch_swissprot_entries(limit=200)
     df = uniprot.extract_features(raw_entries)
     
-    # 2. Text Processing & Leakage Prevention
     text_processor = TextProcessor(df)
     df['clean_text'] = df.apply(lambda row: text_processor.scrub_data_leakage(row['raw_text'], row['go_terms']), axis=1)
     text_processor.implement_fallback_logic()
-    df = text_processor.df # Update with imputed fallback text
+    df = text_processor.df
     
-    # 3. Structural Data Extraction & Validation
     structure_pipe = StructurePipeline(ALPHAFOLD_API_BASE, STRUCTURES_DIR)
     valid_indices = []
     
@@ -29,23 +26,19 @@ def main():
         else:
             if pdb_file and os.path.exists(pdb_file):
                 os.remove(pdb_file)
-    # Discard deviant cases
+                
     df_validated = df.loc[valid_indices]
-    if df_validated.empty:
-        print("Fatal: No sequences passed the structural validation pass.")
-        print("Try increasing the UniProt fetch limit to pull a larger initial sample.")
-        return
-    else:
-        print(f"Success: {len(df_validated)} proteins passed validation.")
     
-    # 4. Remote-Homology Splitting
+    if df_validated.empty:
+        print("No sequences passed the structural validation pass.")
+        return
+        
     fasta_path = os.path.join(RAW_DIR, "sequences.fasta")
     cluster = SequenceClustering(df_validated, threshold=HOMOLOGY_THRESHOLD)
     cluster.export_fasta(fasta_path)
-    cluster.generate_remote_homology_splits(fasta_path, PROCESSED_DIR)
     
-    # 5. Export Final Processed Data
-    df_validated.to_csv(os.path.join(PROCESSED_DIR, "final_dataset.csv"), index=False)
+    # This parses the .clstr file and saves train_dataset.csv, val_dataset.csv, and test_dataset.csv
+    cluster.generate_remote_homology_splits(fasta_path, PROCESSED_DIR)
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ class StructurePipeline:
         self.parser = PDBParser(QUIET=True)
 
     def fetch_alphafold_structure(self, uniprot_id: str) -> str:
-        """Downloads PDB file from AlphaFold DB[cite: 40]."""
+        """Downloads PDB file from AlphaFold DB."""
         url = f"{self.api_base}/{uniprot_id}"
         response = requests.get(url)
         if response.status_code == 200:
@@ -24,20 +24,22 @@ class StructurePipeline:
         return None
 
     def validate_sequence(self, uniprot_sequence: str, pdb_file: str) -> bool:
-        """Ensures the structure sequence matches the UniProt sequence exactly[cite: 43]."""
+        """Ensures the structure sequence matches the UniProt sequence exactly."""
+        from Bio.PDB.Polypeptide import three_to_one
         if not pdb_file or not os.path.exists(pdb_file):
             return False
+        try:
+            structure = self.parser.get_structure('protein', pdb_file)
+            pdb_sequence = ""
             
-        structure = self.parser.get_structure('protein', pdb_file)
-        pdb_sequence = ""
-        
-        # Extract sequence from PDB C-alpha atoms
-        for model in structure:
-            for chain in model:
-                for residue in chain:
-                    if residue.has_id('CA'):
-                         # Simplified: requires 3-letter to 1-letter conversion mapping in practice
-                        pdb_sequence += "X" 
-                        
-        # Simplified validation logic
-        return uniprot_sequence == pdb_sequence
+            for model in structure:
+                for chain in model:
+                    for residue in chain:
+                        # Only look at standard amino acids (ignore water, ligands)
+                        if residue.has_id('CA') and residue.get_resname() in three_to_one:
+                            pdb_sequence += three_to_one[residue.get_resname()]
+                            
+            return uniprot_sequence == pdb_sequence
+        except Exception as e:
+            print(f"Error parsing {pdb_file}: {e}")
+            return False

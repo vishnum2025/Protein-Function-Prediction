@@ -14,7 +14,7 @@ class UniProtPipeline:
         return response.json().get('results', [])
 
     def extract_features(self, entries: List[Dict]) -> pd.DataFrame:
-        """Extracts UniProt ID, sequence, text annotations, and GO terms[cite: 129]."""
+        """Extracts UniProt ID, sequence, text annotations, and GO terms."""
         data = []
         for entry in entries:
             uniprot_id = entry.get('primaryAccession')

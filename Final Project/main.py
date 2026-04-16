@@ -23,12 +23,13 @@ def main():
     
     for index, row in df.iterrows():
         pdb_file = structure_pipe.fetch_alphafold_structure(row['uniprot_id'])
-        # Simplified validation pass
-        is_valid = True # In production: is_valid = structure_pipe.validate_sequence(row['sequence'], pdb_file)
+        is_valid = structure_pipe.validate_sequence(row['sequence'], pdb_file)
         if is_valid:
             valid_indices.append(index)
-            
-    # Discard deviant cases [cite: 43]
+        else:
+            if pdb_file and os.path.exists(pdb_file):
+                os.remove(pdb_file)
+    # Discard deviant cases
     df_validated = df.loc[valid_indices]
     
     # 4. Remote-Homology Splitting

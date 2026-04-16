@@ -13,10 +13,10 @@ class SequenceClustering:
                 f.write(f">{row['uniprot_id']}\n{row['sequence']}\n")
 
     def generate_remote_homology_splits(self, fasta_file: str, output_dir: str):
-        """Uses CD-HIT to cluster sequences ensuring test/train lack high similarity[cite: 1, 129]."""
+        """Uses CD-HIT to cluster sequences ensuring test/train lack high similarity."""
         output_cluster_file = os.path.join(output_dir, "clusters")
         
-        # Construct CD-HIT command (requires cd-hit installed on system)
+        # Construct CD-HIT command
         cmd = [
             "cd-hit",
             "-i", fasta_file,

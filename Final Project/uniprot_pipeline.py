@@ -7,7 +7,7 @@ class UniProtPipeline:
         self.base_url = base_url
 
     def fetch_swissprot_entries(self, query: str = "reviewed:true", limit: int = 100) -> List[Dict]:
-        """Fetches manually curated Swiss-Prot entries[cite: 39]."""
+        """Fetches manually curated Swiss-Prot entries."""
         url = f"{self.base_url}/search?query={query}&format=json&size={limit}"
         response = requests.get(url)
         response.raise_for_status()

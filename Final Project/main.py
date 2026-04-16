@@ -31,6 +31,12 @@ def main():
                 os.remove(pdb_file)
     # Discard deviant cases
     df_validated = df.loc[valid_indices]
+    if df_validated.empty:
+        print("Fatal: No sequences passed the structural validation pass.")
+        print("Try increasing the UniProt fetch limit to pull a larger initial sample.")
+        return
+    else:
+        print(f"Success: {len(df_validated)} proteins passed validation.")
     
     # 4. Remote-Homology Splitting
     fasta_path = os.path.join(RAW_DIR, "sequences.fasta")

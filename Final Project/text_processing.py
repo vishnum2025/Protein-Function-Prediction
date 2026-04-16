@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 from typing import List
-from Bio import pairwise2
+from Bio import Align
 
 class TextProcessor:
     def __init__(self, df: pd.DataFrame):
@@ -17,7 +17,7 @@ class TextProcessor:
         for go_term in go_terms:
             scrubbed_text = scrubbed_text.replace(go_term, "[MASKED_GO]")
             
-        # Regex to mask EC numbers (e.g., EC 1.2.3.4)
+        # Regex to mask EC numbers
         scrubbed_text = re.sub(r'EC\s\d+\.\d+\.\d+\.\d+', '[MASKED_EC]', scrubbed_text)
         return scrubbed_text
 
@@ -27,13 +27,15 @@ class TextProcessor:
         df_missing = self.df[missing_text_mask]
         df_valid = self.df[~missing_text_mask]
 
+        aligner = Align.PairwiseAligner()
+        aligner.mode = 'global'
+
         for index, row in df_missing.iterrows():
             best_score = -1
             best_text = ""
             
             for _, valid_row in df_valid.iterrows():
-                alignments = pairwise2.align.globalxx(row['sequence'], valid_row['sequence'])
-                score = alignments[0].score if alignments else 0
+                score = aligner.score(row['sequence'], valid_row['sequence'])
                 if score > best_score:
                     best_score = score
                     best_text = valid_row['raw_text']

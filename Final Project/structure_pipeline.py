@@ -1,12 +1,15 @@
 import requests
 import os
 from Bio.PDB import PDBParser
+from Bio.Data.IUPACData import protein_letters_3to1
 
 class StructurePipeline:
     def __init__(self, api_base: str, save_dir: str):
         self.api_base = api_base
         self.save_dir = save_dir
         self.parser = PDBParser(QUIET=True)
+        # Create an all-caps mapping dictionary (e.g., 'ALA': 'A')
+        self.d3to1 = {k.upper(): v for k, v in protein_letters_3to1.items()}
 
     def fetch_alphafold_structure(self, uniprot_id: str) -> str:
         """Downloads PDB file from AlphaFold DB."""
@@ -25,7 +28,6 @@ class StructurePipeline:
 
     def validate_sequence(self, uniprot_sequence: str, pdb_file: str) -> bool:
         """Ensures the structure sequence matches the UniProt sequence exactly."""
-        from Bio.PDB.Polypeptide import three_to_one
         if not pdb_file or not os.path.exists(pdb_file):
             return False
         try:
@@ -36,8 +38,9 @@ class StructurePipeline:
                 for chain in model:
                     for residue in chain:
                         # Only look at standard amino acids (ignore water, ligands)
-                        if residue.has_id('CA') and residue.get_resname() in three_to_one:
-                            pdb_sequence += three_to_one[residue.get_resname()]
+                        resname = residue.get_resname().upper()
+                        if residue.has_id('CA') and resname in self.d3to1:
+                            pdb_sequence += self.d3to1[resname]
                             
             return uniprot_sequence == pdb_sequence
         except Exception as e:

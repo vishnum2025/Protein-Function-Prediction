@@ -7,11 +7,27 @@ class UniProtPipeline:
         self.base_url = base_url
 
     def fetch_swissprot_entries(self, query: str = "reviewed:true", limit: int = 100) -> List[Dict]:
-        """Fetches manually curated Swiss-Prot entries."""
-        url = f"{self.base_url}/search?query={query}&format=json&size={limit}"
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json().get('results', [])
+        """Fetches manually curated Swiss-Prot entries (paginated for limit > 500)."""
+        page_size = min(500, limit)
+        url = f"{self.base_url}/search?query={query}&format=json&size={page_size}"
+        entries: List[Dict] = []
+        while url and len(entries) < limit:
+            response = requests.get(url, timeout=60)
+            response.raise_for_status()
+            page = response.json().get('results', [])
+            if not page:
+                break
+            entries.extend(page)
+            print(f"  fetched {len(entries)}/{limit} entries")
+            if len(entries) >= limit:
+                break
+            link = response.headers.get('Link', '')
+            url = None
+            for part in link.split(','):
+                if 'rel="next"' in part:
+                    url = part.split(';')[0].strip().lstrip('<').rstrip('>')
+                    break
+        return entries[:limit]
 
     def extract_features(self, entries: List[Dict]) -> pd.DataFrame:
         """Extracts UniProt ID, sequence, text annotations, and GO terms."""

@@ -12,15 +12,23 @@ class StructurePipeline:
         self.d3to1 = {k.upper(): v for k, v in protein_letters_3to1.items()}
 
     def fetch_alphafold_structure(self, uniprot_id: str) -> str:
-        """Downloads PDB file from AlphaFold DB."""
+        """Downloads PDB file from AlphaFold DB (cached on disk)."""
+        file_path = os.path.join(self.save_dir, f"{uniprot_id}.pdb")
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+            return file_path
         url = f"{self.api_base}/{uniprot_id}"
-        response = requests.get(url)
+        try:
+            response = requests.get(url, timeout=30)
+        except requests.exceptions.RequestException:
+            return None
         if response.status_code == 200:
             data = response.json()
             if data:
                 pdb_url = data[0].get('pdbUrl')
-                pdb_response = requests.get(pdb_url)
-                file_path = os.path.join(self.save_dir, f"{uniprot_id}.pdb")
+                try:
+                    pdb_response = requests.get(pdb_url, timeout=60)
+                except requests.exceptions.RequestException:
+                    return None
                 with open(file_path, 'w') as f:
                     f.write(pdb_response.text)
                 return file_path

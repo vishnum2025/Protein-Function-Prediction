@@ -20,12 +20,10 @@ class PubMedBERTEmbedder:
 
     def _prepare_inputs(self, df: pd.DataFrame) -> list[str]:
         df = df.copy()
-        # Filter out rows with missing or empty clean_text
-        df = df[df["clean_text"].notna() & (df["clean_text"].str.strip() != "")]
-        df["go_terms_str"] = df["go_terms"].apply(
-            lambda x: " ".join(ast.literal_eval(x)) if pd.notna(x) else ""
-        )
-        return (df["clean_text"] + " [SEP] " + df["go_terms_str"]).tolist()
+
+        # Replace NaN or empty strings with a consistent placeholder
+        df["clean_text"] = df["clean_text"].fillna("No description available.").replace("", "No description available.")
+        return (df["clean_text"]).tolist()
 
     def _mean_pool(self, token_embeddings, attention_mask):
         mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
@@ -61,8 +59,7 @@ class PubMedBERTEmbedder:
     def embed_dataframe(self, df: pd.DataFrame) -> tuple[np.ndarray, pd.DataFrame]:
         texts = self._prepare_inputs(df)
         texts = [str(text) for text in texts]  # Ensure all texts are strings
-        filtered_df = df[df["clean_text"].notna() & (df["clean_text"].str.strip() != "")]
-        return self.embed_texts(texts), filtered_df
+        return self.embed_texts(texts), df
 
     def save(self, embeddings: np.ndarray, df: pd.DataFrame,
              emb_path="pubmedbert_embeddings.npy", idx_path="embedding_index.csv"):

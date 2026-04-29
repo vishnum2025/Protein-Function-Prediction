@@ -1,0 +1,42 @@
+{
+  "model": "sequence_text_structure_fusion",
+  "best_val_fmax": 0.4095221737605891,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.40446292655257327,
+      "fmax_threshold": 0.37,
+      "aupr": 0.3376777097122265,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.36903705099160355,
+        "fmax_threshold": 0.38,
+        "aupr": 0.32067107514651144,
+        "smin": 32.71767299365625,
+        "smin_threshold": 0.36000000000000004
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.36164466838125414,
+        "fmax_threshold": 0.34,
+        "aupr": 0.272835316328066,
+        "smin": 203.34871914634584,
+        "smin_threshold": 0.34
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.5690655353406937,
+        "fmax_threshold": 0.39,
+        "aupr": 0.544177814001429,
+        "smin": 32.4580031102949,
+        "smin_threshold": 0.39
+      }
+    },
+    "mean_gate_sequence": 0.00016412461991421878,
+    "mean_gate_text": 0.0005867308937013149,
+    "mean_gate_structure": 0.9992491602897644
+  }
+}

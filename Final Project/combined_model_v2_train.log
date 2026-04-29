@@ -1,0 +1,75 @@
+[info] device=cpu
+[info] label space (min_freq=3): 3924
+[info] splits — train=794 val=99 test=97
+[ep 01] loss=0.6998  aux_loss=1.0945  val_fmax(main)=0.3945@t=0.35  contrib(s,t,g)=(0.082,0.192,0.726)
+[ep 02] loss=0.6487  aux_loss=1.0166  val_fmax(main)=0.3986@t=0.32  contrib(s,t,g)=(0.081,0.198,0.721)
+[ep 03] loss=0.6354  aux_loss=0.9874  val_fmax(main)=0.4187@t=0.37  contrib(s,t,g)=(0.084,0.211,0.705)
+[ep 04] loss=0.6142  aux_loss=0.9560  val_fmax(main)=0.4517@t=0.37  contrib(s,t,g)=(0.102,0.262,0.635)
+[ep 05] loss=0.5921  aux_loss=0.9292  val_fmax(main)=0.4732@t=0.36  contrib(s,t,g)=(0.128,0.316,0.556)
+[done] saved final_combined_model_v3_results.json
+{
+  "model": "sequence_text_structure_concat_v3",
+  "best_val_fmax": 0.47315980333002916,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.4367445497420031,
+      "fmax_threshold": 0.38,
+      "aupr": 0.4053408627155777,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.4460376059688158,
+        "fmax_threshold": 0.39,
+        "aupr": 0.42358095262203965,
+        "smin": 29.63258566595981,
+        "smin_threshold": 0.43
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.3855265725460029,
+        "fmax_threshold": 0.35000000000000003,
+        "aupr": 0.342769475152219,
+        "smin": 194.67543013878873,
+        "smin_threshold": 0.4
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.6172236324246857,
+        "fmax_threshold": 0.42000000000000004,
+        "aupr": 0.5956424255714814,
+        "smin": 31.2495697329511,
+        "smin_threshold": 0.42000000000000004
+      }
+    },
+    "mean_gate_sequence": 0.12938617169857025,
+    "mean_gate_text": 0.3129398822784424,
+    "mean_gate_structure": 0.5576739311218262
+  },
+  "aux_overall": {
+    "seq": {
+      "fmax": 0.4410429123886819,
+      "fmax_threshold": 0.42000000000000004
+    },
+    "text": {
+      "fmax": 0.4376149840522521,
+      "fmax_threshold": 0.41000000000000003
+    },
+    "struct": {
+      "fmax": 0.40558376644045385,
+      "fmax_threshold": 0.38
+    }
+  },
+  "_v3_settings": {
+    "fusion": "concat",
+    "aux_weight": 0.3,
+    "modality_dropout_prob": 0.3,
+    "epochs": 5,
+    "n_train": 794,
+    "n_val": 99,
+    "n_test": 97,
+    "note": "mean_gate_* fields hold relative L2 contribution per modality (not softmax gates \u2014 there is no gate in v3)."
+  }
+}

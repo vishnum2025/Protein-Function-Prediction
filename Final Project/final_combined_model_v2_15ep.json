@@ -1,0 +1,66 @@
+{
+  "model": "sequence_text_structure_concat_v3",
+  "best_val_fmax": 0.508766230478241,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.47835426542644,
+      "fmax_threshold": 0.5,
+      "aupr": 0.45524328520557555,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.5349953317194542,
+        "fmax_threshold": 0.53,
+        "aupr": 0.5292961665316368,
+        "smin": 26.575357037580297,
+        "smin_threshold": 0.59
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.4306093195344302,
+        "fmax_threshold": 0.47000000000000003,
+        "aupr": 0.3761273606717262,
+        "smin": 191.8221555691029,
+        "smin_threshold": 0.52
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.6481736349424693,
+        "fmax_threshold": 0.55,
+        "aupr": 0.6575825004834785,
+        "smin": 29.183781011978187,
+        "smin_threshold": 0.52
+      }
+    },
+    "mean_gate_sequence": 0.18670812249183655,
+    "mean_gate_text": 0.4169864058494568,
+    "mean_gate_structure": 0.39630547165870667
+  },
+  "aux_overall": {
+    "seq": {
+      "fmax": 0.43367930638647373,
+      "fmax_threshold": 0.52
+    },
+    "text": {
+      "fmax": 0.47567984559344806,
+      "fmax_threshold": 0.51
+    },
+    "struct": {
+      "fmax": 0.4149740103784506,
+      "fmax_threshold": 0.31
+    }
+  },
+  "_v3_settings": {
+    "fusion": "concat",
+    "aux_weight": 0.3,
+    "modality_dropout_prob": 0.3,
+    "epochs": 15,
+    "n_train": 794,
+    "n_val": 99,
+    "n_test": 97,
+    "note": "mean_gate_* fields hold relative L2 contribution per modality (not softmax gates \u2014 there is no gate in v3)."
+  }
+}

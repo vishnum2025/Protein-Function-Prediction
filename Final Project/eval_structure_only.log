@@ -1,0 +1,55 @@
+[info] device=cpu
+[info] ontology loaded: 38560 GO terms
+[info] label space (min_freq=3): 3924 GO terms
+[info] splits — train=794 val=99 test=97
+[ep 01] train_loss=0.3653  val_fmax=0.3899 @ t=0.36
+[ep 02] train_loss=0.3465  val_fmax=0.4048 @ t=0.32
+[ep 03] train_loss=0.3445  val_fmax=0.4110 @ t=0.35
+[ep 04] train_loss=0.3437  val_fmax=0.4160 @ t=0.31
+[ep 05] train_loss=0.3406  val_fmax=0.4200 @ t=0.37
+[done] saved final_structure_only_results.json
+{
+  "model": "structure_only",
+  "best_val_fmax": 0.419958548378127,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.414689682858592,
+      "fmax_threshold": 0.38,
+      "aupr": 0.3489216898192944,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.4216559944713147,
+        "fmax_threshold": 0.41000000000000003,
+        "aupr": 0.3655032669264974,
+        "smin": 31.0263271311099,
+        "smin_threshold": 0.41000000000000003
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.368822544807916,
+        "fmax_threshold": 0.36000000000000004,
+        "aupr": 0.28300574682859236,
+        "smin": 202.54440355726533,
+        "smin_threshold": 0.38
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.5705443900286679,
+        "fmax_threshold": 0.39,
+        "aupr": 0.5494336609553933,
+        "smin": 32.52589718319664,
+        "smin_threshold": 0.39
+      }
+    }
+  },
+  "_notes": {
+    "n_train": 794,
+    "n_val": 99,
+    "n_test": 97,
+    "comment": "Test n differs from final_combined_model_results.json (n=10) because structure-only does not require text-encoding overlap."
+  }
+}

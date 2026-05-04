@@ -1,0 +1,48 @@
+{
+  "model": "sequence_text_baseline",
+  "best_val_fmax": 0.4406,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.42326702499814145,
+      "fmax_threshold": 0.35000000000000003,
+      "aupr": 0.3765881241660801,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.40076412071264633,
+        "fmax_threshold": 0.36000000000000004,
+        "aupr": 0.3776524086795863,
+        "smin": 31.38864864089008,
+        "smin_threshold": 0.35000000000000003
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.3755078862429829,
+        "fmax_threshold": 0.32,
+        "aupr": 0.32009698271202197,
+        "smin": 197.71403557189657,
+        "smin_threshold": 0.34
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.5896129297535587,
+        "fmax_threshold": 0.38,
+        "aupr": 0.5554077661620096,
+        "smin": 31.622673315148,
+        "smin_threshold": 0.38
+      }
+    }
+  },
+  "_notes": {
+    "n_train": 794,
+    "n_val": 99,
+    "n_test": 97,
+    "epochs": 40,
+    "source": "Snapshotted from Text_Encoder_MLP_Training.ipynb cell 15 output (training run that produced the seq+text baseline with NN-fallback for missing UniProt descriptions).",
+    "model_class": "Sequence_Text.TextSeqMLP (concat of pooled ESM-2 seq embedding + PubMedBERT-pooled text embedding -> MLP).",
+    "comment": "Test set is the CD-HIT 40%-identity remote-homology split. Note: this run used 40 epochs vs 15 in the other baselines; comparison is noisy on this axis but the seq+text test Fmax has plateaued by epoch ~30 in the log."
+  }
+}

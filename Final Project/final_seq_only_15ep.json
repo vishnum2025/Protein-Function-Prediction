@@ -1,0 +1,46 @@
+{
+  "model": "sequence_only",
+  "best_val_fmax": 0.4720100858000784,
+  "test_remote_homology_subset": {
+    "n": 97,
+    "overall": {
+      "fmax": 0.43990809958521526,
+      "fmax_threshold": 0.51,
+      "aupr": 0.37795186455122354,
+      "mean_labels_per_protein": 115.63917541503906
+    },
+    "MF_BP_CC": {
+      "MF": {
+        "num_terms": 547,
+        "fmax": 0.4867899787717253,
+        "fmax_threshold": 0.5700000000000001,
+        "aupr": 0.4725766352919628,
+        "smin": 28.26299726763001,
+        "smin_threshold": 0.67
+      },
+      "BP": {
+        "num_terms": 2923,
+        "fmax": 0.3808514677972521,
+        "fmax_threshold": 0.47000000000000003,
+        "aupr": 0.28845173108294253,
+        "smin": 202.95816942216365,
+        "smin_threshold": 0.54
+      },
+      "CC": {
+        "num_terms": 449,
+        "fmax": 0.6293377780609475,
+        "fmax_threshold": 0.54,
+        "aupr": 0.6080317812470024,
+        "smin": 30.487818004928414,
+        "smin_threshold": 0.5700000000000001
+      }
+    }
+  },
+  "_notes": {
+    "n_train": 794,
+    "n_val": 99,
+    "n_test": 97,
+    "epochs": 15,
+    "comment": "ESM-2 mean-pooled embedding -> MLP. Test set is already the CD-HIT 40%-identity remote-homology split."
+  }
+}

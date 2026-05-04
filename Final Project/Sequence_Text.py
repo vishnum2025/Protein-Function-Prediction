@@ -4,12 +4,18 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset
 import torch.nn.functional as F
 import ast
-from train_baselines import multi_hot, protein_centric_fmax
 
-from sklearn.metrics import average_precision_score
+# Import the shared evaluation harness from your combined_model.py
+from combined_model import (
+    GOOntology, 
+    build_label_space, 
+    class_pos_weight, 
+    information_content, 
+    summarize_metrics,
+    fmax_score
+)
 
 def load_no_description_ids(path: str) -> set:
     """Load the set of UniProt IDs that had no UniProt description."""
@@ -30,15 +36,16 @@ class SeqTextDataset(Dataset):
         text_raw = np.load(text_npy_path)   # PubMedBERT embeddings numpy array
 
         # 2. FILTERING: Only keep IDs that exist as keys in the sequence dictionary
-        # This prevents KeyErrors for IDs like 'P02745'
+        # This prevents KeyErrors during __getitem__
         mask = df_raw["uniprot_id"].isin(self.seq_data.keys())
         
         # 3. Synchronize all internal structures
-        # reset_index is critical so idx 0 to N maps correctly after filtering
+        # reset_index ensures that the row index matches the text embedding array index
         self.df = df_raw[mask].reset_index(drop=True)
-        self.text_data = text_raw[mask.values] # Row-aligned PubMedBERT vectors
+        self.text_data = text_raw[mask.values] 
         
         self.label_to_idx = label_to_idx
+        # Store missing description IDs for fallback/monitoring logic
         self.no_description_ids = no_description_ids if no_description_ids else set()
 
         print(f"Dataset Initialized: {len(self.df)} valid proteins (Dropped {len(df_raw) - len(self.df)})")
@@ -47,17 +54,22 @@ class SeqTextDataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
-        # Now this lookup is guaranteed to be safe
         row = self.df.iloc[idx]
         uid = row["uniprot_id"]
         
+        # Load embeddings as Tensors
         z_seq = torch.tensor(self.seq_data[uid], dtype=torch.float32)
         z_text = torch.tensor(self.text_data[idx], dtype=torch.float32)
         
+        # Process Labels
         terms = ast.literal_eval(row["go_terms"]) if isinstance(row["go_terms"], str) else []
-        y = torch.tensor(multi_hot(terms, self.label_to_idx), dtype=torch.float32)
+        y = np.zeros(len(self.label_to_idx), dtype=np.float32)
+        for t in terms:
+            if t in self.label_to_idx:
+                y[self.label_to_idx[t]] = 1.0
         
-        return uid, z_seq, z_text, y
+        # Return as a tuple to match your notebook's training loop unpacking
+        return uid, z_seq, z_text, torch.tensor(y)
     
 ############################################
 # Model
@@ -124,39 +136,40 @@ def apply_inference_fallback(target_ds: SeqTextDataset,
  
     return target_ds
 
-def train_one_epoch(model, loader, optimizer, pos_weight, device):
+def train_epoch(model, loader, optimizer, pos_weight, device):
     model.train()
     total_loss = 0.0
- 
-    for _, z_seq, z_text, y in loader:
+    # Change batch to unpack the tuple returned by SeqTextDataset.__getitem__
+    for uid, z_seq, z_text, y in loader:
         z_seq, z_text, y = z_seq.to(device), z_text.to(device), y.to(device)
- 
+        
         optimizer.zero_grad()
-        pred = model(z_seq, z_text)
-        loss   = F.binary_cross_entropy_with_logits(pred, y, pos_weight=pos_weight)
+        logits = model(z_seq, z_text)
+        loss = F.binary_cross_entropy_with_logits(logits, y, pos_weight=pos_weight)
         loss.backward()
         optimizer.step()
- 
-        total_loss += loss.item() * z_seq.size(0)
- 
-    return total_loss / len(loader.dataset)
- 
-def evaluate(model, dataloader, device):
-    model.eval()
-    y_true, y_pred = [], []
-    
-    with torch.no_grad():
-        for _, z_seq, z_text, y in dataloader:
-            z_seq, z_text = z_seq.to(device), z_text.to(device)
-            pred = model(z_seq, z_text)
-            pred = torch.sigmoid(pred)
-
-            y_true.append(y.cpu().numpy())
-            y_pred.append(pred.cpu().numpy())
-    y_true = np.vstack(y_true)
-    y_pred = np.vstack(y_pred)
-
-    fmax, threshold = protein_centric_fmax(y_true, y_pred)
-    aupr = average_precision_score(y_true, y_pred, average="micro")
         
-    return {"fmax": fmax, "threshold":threshold, "aupr": aupr}
+        total_loss += loss.item() * z_seq.size(0)
+    return total_loss / len(loader.dataset)
+
+def evaluate(model, loader, device):
+    model.eval()
+    y_true, y_prob, ids = [], [], []
+    with torch.no_grad():
+        # Change batch to unpack the tuple here as well
+        for uid, z_seq, z_text, y in loader:
+            logits = model(z_seq.to(device), z_text.to(device))
+            
+            y_true.append(y.numpy())
+            y_prob.append(torch.sigmoid(logits).cpu().numpy())
+            ids.extend(uid) # uid is already a list/tuple of strings from the batch
+    
+    # Structure results for summarize_metrics compatibility
+    y_true_stacked = np.vstack(y_true)
+    return {
+        "y_true": y_true_stacked,
+        "y_prob": np.vstack(y_prob),
+        "protein_ids": ids,
+        # summarize_metrics expects 'gates' even if they are 0s
+        "gates": np.zeros((len(ids), 3), dtype=np.float32) 
+    }

@@ -2,8 +2,9 @@
 
 Coursework from Georgia Tech CS 4803/8803 MLCB (Machine Learning in Computational Biology), Spring 2025. Two projects on machine-learning approaches to protein modeling:
 
-1. **Hackathon** — Active-learning-guided prediction of protein fitness from single-site mutations (Deep Mutational Scanning).
-2. **Final Project** — Multimodal protein function prediction (Gene Ontology terms) from sequence, 3D structure, and free-text annotations.
+1. **Final Project** — Multimodal protein function prediction (Gene Ontology terms) from sequence, 3D structure, and free-text annotations.
+2. **Hackathon** — Active-learning-guided prediction of protein fitness from single-site mutations (Deep Mutational Scanning).
+
 
 ## Team
 
